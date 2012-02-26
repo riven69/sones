@@ -345,7 +345,7 @@ namespace sones.GraphQL
             var string_literal = new StringLiteral("string", "'", StringOptions.AllowsDoubledQuote | StringOptions.AllowsLineBreak);
             var location_literal = new StringLiteral("file", "'", StringOptions.AllowsDoubledQuote | StringOptions.AllowsLineBreak | StringOptions.NoEscapes);
 
-            var name = new IdentifierTerminal("name", "�������0123456789_", "������0123456789$_");
+            var name = new IdentifierTerminal("name", "ÄÖÜäöüß0123456789_", "ÄÖÜäöü0123456789$_");
 
 
             #endregion
