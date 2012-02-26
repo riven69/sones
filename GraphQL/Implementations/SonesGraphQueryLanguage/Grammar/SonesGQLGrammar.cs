@@ -345,7 +345,7 @@ namespace sones.GraphQL
             var string_literal = new StringLiteral("string", "'", StringOptions.AllowsDoubledQuote | StringOptions.AllowsLineBreak);
             var location_literal = new StringLiteral("file", "'", StringOptions.AllowsDoubledQuote | StringOptions.AllowsLineBreak | StringOptions.NoEscapes);
 
-            var name = new IdentifierTerminal("name", "ÄÖÜäöüß0123456789_", "ÄÖÜäöü0123456789$_");
+            var name = new IdentifierTerminal("name", "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½0123456789_", "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½0123456789$_");
 
 
             #endregion
@@ -2650,6 +2650,10 @@ namespace sones.GraphQL
         {
             var stringBuilder = new StringBuilder();
             String delimiter = ", ";
+
+            if (myVertexType.IsAbstract)
+                stringBuilder.AppendFormat("{0} ", S_ABSTRACT.ToUpperString());
+ 
             stringBuilder.AppendFormat("{0} ", myVertexType.Name);
 
             #region parent type
@@ -3121,11 +3125,16 @@ namespace sones.GraphQL
 
             foreach (var aVertexType in myTypesToDump)
             {
-                var propertyDefinitions = aVertexType.GetPropertyDefinitions(true).ToDictionary(key => key.ID, value => value);
-
-                foreach (var aVertex in GetAllVertices(aVertexType, mySecurityToken, myTransactionToken))
+                if (!aVertexType.IsAbstract)    // Skip ABSTRACT (parent) Vertex types (can not contain vertices)
                 {
-                    queries.Add(CreateGraphDMLforIVertex(aVertexType, aVertex, propertyDefinitions));
+                    foreach (var aVertex in GetAllVertices(aVertexType, mySecurityToken, myTransactionToken))
+                    {
+                        if (aVertex.VertexTypeID == aVertexType.ID) // Skip parent VertexTypes
+                        {
+                            var propertyDefinitions = aVertexType.GetPropertyDefinitions(true).ToDictionary(key => key.ID, value => value);
+                            queries.Add(CreateGraphDMLforIVertex(aVertexType, aVertex, propertyDefinitions));
+                        }
+                    }
                 }
             }
 
